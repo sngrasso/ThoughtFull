@@ -1,0 +1,447 @@
+/***********************************************************************************
+  MoodyMaze
+  by Scott Kildall
+
+  Uses the p5.2DAdventure.js class 
+  
+------------------------------------------------------------------------------------
+	To use:
+	Add this line to the index.html
+
+  <script src="p5.2DAdventure.js"></script>
+***********************************************************************************/
+
+// adventure manager global  
+var adventureManager;
+
+// p5.play
+var playerSprite;
+var playerAnimation;
+
+// Clickables: the manager class
+var clickablesManager;    // the manager class
+var clickables;           // an array of clickable objects
+
+
+// indexes into the clickable array (constants) 
+const cl_startScenario = 0;
+const cl_Start_GoomazonPays = 1;
+const cl_Start_CityPays = 2;
+const cl_Start_RaiseTaxes = 3;
+const cl_GoomazonMoves_CityPays = 4;
+const cl_GoomazonMoves_RaiseTaxes = 5;
+const cl_GoomazonMoves_BuildRival = 6;
+const cl_GoomazonMoves_IgnoreThem = 7;
+const cl_CityPays_CutTheArts = 8;
+const cl_CityPays_CutTransportation = 9;
+const cl_CityPays_CutCityWages = 10;
+const cl_CityPays_CutParks = 11;
+
+
+// anger emojis
+var angerImage;   // anger emoji
+var maxAnger = 5;
+
+// character arrays
+var characterImages = [];   // array of character images, keep global for future expansion
+var characters = [];        // array of charactes
+
+// characters
+const shareHold = 0;
+const govern = 1;
+const developers = 2;
+const upperStudents = 3;
+const lowerStudents = 4;
+const moms = 5;
+
+// my variables
+let budget = 50000;
+
+
+// room indices - look at adventureManager
+const startScreen = 3;
+const governScreen = 4;
+const secureScreen = 5;
+const endOneScreen = 6;
+const endTwoScreen = 7;
+const eduScreen = 8;
+const eduUpperScreen = 9;
+const eduLowerScreen = 10;
+const eduLowerAddScreen = 11;
+const budgetScreen = 12;
+const sellScreen = 13;
+const adScreen = 14;
+const keepScreen = 15;
+const salaryScreen = 16;
+const productScreen = 17;
+const rumorScreen = 18;
+const ignoreScreen = 19;
+
+let headlineFont;
+let bodyFont;
+
+
+// Allocate Adventure Manager with states table and interaction tables
+function preload() {
+
+  headlineFont = loadFont('fonts/AstroSpace-0Wl3o.otf');
+  bodyFont = loadFont('fonts/Ubuntu-Regular.ttf');
+
+  // load all images
+  angerImage = loadImage("assets/anger_emoji.png");
+  
+  //allocateCharacters();
+
+  clickablesManager = new ClickableManager('data/clickableLayout.csv');
+  adventureManager = new AdventureManager('data/adventureStates.csv', 'data/interactionTable.csv', 'data/clickableLayout.csv');
+}
+
+// Setup the adventure manager
+function setup() {
+  createCanvas(1280, 720);
+
+  // setup the clickables = this will allocate the array
+  clickables = clickablesManager.setup();
+
+  // this is optional but will manage turning visibility of buttons on/off
+  // based on the state name in the clickableLayout
+  adventureManager.setClickableManager(clickablesManager);
+
+  // This will load the images, go through state and interation tables, etc
+  adventureManager.setup();
+
+  // load all text screens
+  loadAllText();
+
+  // call OUR function to setup additional information about the p5.clickables
+  // that are not in the array 
+  setupClickables(); 
+
+  fs = fullscreen();
+  console.log("finished setup")
+}
+
+// Adventure manager handles it all!
+function draw() {
+  // draws background rooms and handles movement from one to another
+  adventureManager.draw();
+
+ // drawCharacters();
+
+  // don't draw them on first few screens
+  if( adventureManager.getStateName() === "Splash" ||
+      adventureManager.getStateName() === "Instructions" ||
+      adventureManager.getStateName() === "Characters" ) {
+    ;
+  }
+  else {
+    //drawCharacters();
+  }
+  
+  // draw the p5.clickables, in front of the mazes but behind the sprites
+  clickablesManager.draw();
+}
+
+// pass to adventure manager, this do the draw / undraw events
+function keyPressed() {
+  // toggle fullscreen mode
+  if( key === 'f') {
+    fs = fullscreen();
+    fullscreen(!fs);
+    return;
+  }
+
+  // dispatch all keys to adventure manager
+  adventureManager.keyPressed(key); 
+}
+
+function mouseReleased() {
+  // dispatch all mouse events to adventure manager
+  adventureManager.mouseReleased();
+}
+
+function drawCharacters() {
+  for( let i = 0; i < characters.length; i++ ) {
+    characters[i].draw();
+  }
+}
+
+//-------------- CLICKABLE CODE  ---------------//
+
+function setupClickables() {
+  // All clickables to have same effects
+  for( let i = 0; i < clickables.length; i++ ) {
+    clickables[i].width = 500;
+    clickables[i].height = 75;
+    clickables[i].textSize = 20;
+    clickables[i].strokeWeight = 0;
+    clickables[i].cornerRadius = 30;
+    clickables[i].textFont = bodyFont;
+
+    clickables[i].onHover = clickableButtonHover;
+    clickables[i].onOutside = clickableButtonOnOutside;
+    clickables[i].onPress = clickableButtonPressed;
+  }
+
+  // we do specific callbacks for each clickable
+
+}
+
+// tint when mouse is over
+clickableButtonHover = function () {
+  this.color = "#00b3d6";
+  this.noTint = false;
+  this.tint = "#FF0000";
+  this.textColor = "#FFFFFF";
+  this.strokeWeight = 2;
+  this.stroke = "#007c9e"
+}
+
+// color a light gray if off
+clickableButtonOnOutside = function () {
+  // backto our gray color
+  this.color = "#E8E8E8";
+  this.textColor = "#4E4E4E";
+  this.strokeWeight = 0;
+
+}
+
+clickableButtonPressed = function() {
+  adventureManager.clickablePressed(this.name);
+} 
+
+//-- specific button callbacks: these will add or subtrack anger, then
+//-- pass the clickable pressed to the adventure manager, which changes the
+//-- state. A more elegant solution would be to use a table for all of these values
+
+clEnding = function() {
+  console.log("ending")
+  adventureManager.clickablePressed(this.name);
+}
+
+clRaiseTaxes = function() {
+  characters[upperStudents].addAnger(1);
+  characters[moms].addAnger(1);
+  characters[lowerStudents].addAnger(1);
+  characters[shareHold].subAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+clBuildRival = function() {
+  characters[upperStudents].addAnger(2);
+  characters[moms].subAnger(1);
+  characters[shareHold].addAnger(1);
+  characters[developers].addAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+clIgnoreThem = function() {
+  characters[upperStudents].addAnger(1);
+  characters[lowerStudents].addAnger(1);
+  characters[developers].addAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+clCutArts = function() {
+  characters[lowerStudents].addAnger(2);
+  characters[moms].addAnger(2);
+  characters[govern].addAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+clCutTransportation = function() {
+  characters[lowerStudents].addAnger(3);
+  characters[govern].addAnger(1);
+  characters[moms].addAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+clCutCityWages = function() {
+  characters[govern].addAnger(2);
+  characters[developers].addAnger(2);
+  characters[moms].addAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+clCutParks = function() {
+  characters[govern].addAnger(1);
+  characters[lowerStudents].addAnger(2);
+  characters[moms].addAnger(1);
+  adventureManager.clickablePressed(this.name);
+}
+
+
+
+
+
+//-------------- CHARACTERS -------------//
+function allocateCharacters() {
+  // load the images first
+  characterImages[shareHold] = loadImage("assets/consumer.jpg");
+  characterImages[govern] = loadImage("assets/consumer.jpg");
+  characterImages[developers] = loadImage("assets/consumer.jpg");
+  characterImages[upperStudents] = loadImage("assets/consumer.jpg");
+  characterImages[lowerStudents] = loadImage("assets/consumer.jpg");
+  characterImages[moms] = loadImage("assets/consumer.jpg");
+
+  for( let i = 0; i < characterImages.length; i++ ) {
+    characters[i] = new Character();
+    characters[i].setup( characterImages[i], 50 + (400 * parseInt(i/2)), 120 + (i%2 * 120));
+  }
+
+  // default anger is zero, set up some anger values
+  characters[developers].addAnger(1);
+  characters[upperStudents].addAnger(2);
+  characters[lowerStudents].addAnger(1);
+  characters[moms].subAnger(2); // test
+}
+
+class Character {
+  constructor() {
+    this.image = null;
+    this.x = width/2;
+    this.y = width/2;
+  }
+
+  setup(img, x, y) {
+    this.image = img;
+    this.x = x;
+    this.y = y;
+    this.anger = 0;
+  }
+
+  draw() {
+    if( this.image ) {
+      push();
+      // draw the character icon
+      imageMode(CENTER);
+      image( this.image, this.x, this.y );
+
+      // draw anger emojis
+      for( let i = 0; i < this.anger; i++ ) {
+        image(angerImage, this.x + 70 + (i*40), this.y +10 );
+      }
+
+      pop();
+    }
+  }
+
+  getAnger() {
+    return this.anger;
+  }
+
+  // add, check for max overflow
+  addAnger(amt) {
+    this.anger += amt;
+    if( this.anger > maxAnger ) {
+      this.anger = maxAnger;
+    }
+
+  }
+
+  // sub, check for below zero
+  subAnger(amt) {
+    this.anger -= amt;
+    if( this.anger < 0 ) {
+      this.anger = 0;
+    }
+  }
+}
+
+//-------------- ROOMS --------------//
+
+// hard-coded text for all the rooms
+// the elegant way would be to load from an array
+function loadAllText() {
+  // go through all states and setup text
+  // ONLY call if these are ScenarioRoom
+  
+// copy the array reference from adventure manager so that code is cleajer
+  scenarioRooms = adventureManager.states;
+
+  scenarioRooms[startScreen].setText("Who's the primary Market?", "This is a new device you created that is able to project a person’s thoughts as a visual interpretation to others. It offers a new way of communicating to others. You’re about to launch this new technology, but you must choose the primary market, who do you choose?");
+  scenarioRooms[governScreen].setText("Where to start?", "The local government wants to test out your product. They’re asking you which session ");
+  scenarioRooms[secureScreen].setText("Good News", "Tool does well in the trial run and now they offer to expand out towards international government relations. They want to start using it as a device to help aid in meetings between nations inorder to propose new ideas. However; the team you're in contact with is concerned that there are flaws in the security protocol within your system. ");
+  scenarioRooms[endOneScreen].setText("Ending One", "By ignoring the request, something goes wrong during the meeting. The head set gets hacked and you are seen as a potential threat to the country. The nations at the meeting are now on bad terms and the US has now lost trading relations with [unknown country]");
+  scenarioRooms[endTwoScreen].setText("Ending Two", "By hiring the team of security experts, you not only met the needs of their request, but you also protect against any possible means of sabotage that could occur during the meeting. ");
+  scenarioRooms[eduScreen].setText("Pick an Age Group","Which age group would you like to invest into?");
+  scenarioRooms[eduUpperScreen].setText("Extended Features","Device is being mainly used and tested within a group dynamic. More students feel more encouraged to participate in group projects and feel more productive. However; they express how they would like for more features geared towards group related tasks to be included. For example, a way to download previous thought projections and save them to a local computer.");
+  scenarioRooms[eduLowerScreen].setText("Extended Features", "Device is being used within the classroom as a way to develop better understandings on certain topics discussed in class and as a way to stimulate creativity. The kids are enjoying it, but they express that the headset itself is a little bit restrictive and want the head set to be more free moving.")
+  scenarioRooms[eduLowerAddScreen].setText("Additional Extended Features", "Device is being used within the classroom as a way to develop better understandings on certain topics discussed in class and as a way to stimulate creativity. The kids are enjoying it, but they express that the headset itself is a little bit restrictive and want the head set to be more free moving.");
+  scenarioRooms[budgetScreen].setText("Budget Problems", "Sponsors are complaining that you’re not making enough money with this device. They suggest to move over to a paid model service that limits functionality and uses curated user ads.");
+  scenarioRooms[sellScreen].setText("Ending Three", "You sell to a randomly selected company. Now that the decisions are out of your control the ending is displayed as good or bad.");
+  scenarioRooms[adScreen].setText("Ending Four", "Target market no longer can afford your device, now it’s marketed as a tech toy by the upper elite class that stops being relevant by the time another new gadget is introduced.");
+  scenarioRooms[keepScreen].setText("Keep the Current Model", "By leaving the current model as it is, the budget has become tighter than before. By not implementing a paid model you have to make budget cuts elsewhere.");
+  scenarioRooms[salaryScreen].setText("Ending Five", "Staff is starting to leave, unpaid interns are not motivated in putting countless hours into working for barely any benefits. Product ends up becoming buggy.");
+  scenarioRooms[productScreen].setText("Cut Production Costs", "You went with cutting production costs, as a result the device keeps breaking and is buggy. Malfunctioning hardware is stirring up concern in the mothers anonymous forum. In the next week a rumor starts circulating that you’re brainwashing students.");
+  scenarioRooms[rumorScreen].setText("Ending Six", "You make a statement about the rumors and take full responsibility for the drop in performance. You personally start putting hours to fix the technology. The newer version you produce becomes a bigger hit and everyone is happy.");
+  scenarioRooms[ignoreScreen].setText("Ending Seven", "You ignore the rumors and don’t address them. The mother’s association sues your product for potentially harming their children. You lose the case and are bared from ever working in the industry again.");
+
+}
+
+//-------------- SUBCLASSES / YOUR DRAW CODE CAN GO HERE ---------------//
+
+// Instructions screen has a backgrounnd image, loaded from the adventureStates table
+// It is sublcassed from PNGRoom, which means all the loading, unloading and drawing of that
+// class can be used. We call super() to call the super class's function as needed
+class ScenarioRoom extends PNGRoom {
+  // Constructor gets calle with the new keyword, when upon constructor for the adventure manager in preload()
+  constructor() {
+    super();    // call super-class constructor to initialize variables in PNGRoom
+
+    this.titleText = "";
+    this.bodyText = "";
+  }
+
+  // should be called for each room, after adventureManager allocates
+  setText( titleText, bodyText ) {
+    this.titleText = titleText;
+    this.bodyText = bodyText;
+    this.offset = 200;
+    this.drawY = 360 - this.offset;
+    this.drawX = 52;
+  }
+
+  // call the PNGRoom superclass's draw function to draw the background image
+  // and draw our instructions on top of this
+    draw() {
+      // this calls PNGRoom.draw()
+      super.draw();
+      
+      push();
+
+      fill(248, 248, 248, 180)
+      stroke(146, 161, 161);
+      rect(this.drawX - 15, this.drawY - 60, width - ((this.drawX - 15) * 2),height - (this.drawY + 250), 30)
+
+      // title text
+      fill("#8D8D8D");
+      textAlign(LEFT);
+      textFont(headlineFont);
+      textSize(36);
+      noStroke();
+
+
+      text("$ " + budget, this.drawX + 200 , 60);
+
+      fill("#484848");
+      text("Budget: ",this.drawX , 60)
+      // title text
+      textSize(30);
+
+      text("- " + this.titleText, this.drawX , this.drawY);
+     
+      // Draw text in a box
+      //text(this.titleText, width/6, height/6, this.textBoxWidth, this.textBoxHeight );
+    
+      textFont(bodyFont);
+      textSize(24);
+      fill("#8D8D8D");
+
+      text(this.bodyText, this.drawX , this.drawY + 60, width - (this.drawX*2),height - (this.drawY+100) );
+      pop();
+
+
+    }
+}
+
