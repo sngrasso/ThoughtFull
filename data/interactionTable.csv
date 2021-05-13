@@ -2,7 +2,7 @@ CurrentState,KeyTyped,KeyCode,MouseEvent,ClickableName,MapDirection,NextState
 Splash,,,mouseReleased,,,Instructions
 Instructions,,,mouseReleased,,,Characters
 Characters,,,,StartScenario,,Start
-Start,,,,Start_Govern,,Govern_Route
+Start,,,,Start_Govern,,Govern_Security
 Start,,,,Start_Education,,Edu_Route
 Govern_Route,,,,Option_One,,Govern_Security
 Govern_Route,,,,Option_Two,,Govern_Security
