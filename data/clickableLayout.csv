@@ -1,5 +1,5 @@
 ID,Name,State,PNGFilename,Text,x,y,visible
-0,StartScenario,Characters,,Start Scenario,100,650,yes
+0,StartScenario,Characters,,Start Scenario,550,620,yes
 1,Start_Govern,Start,,Government,100,500,yes
 2,Start_Education,Start,,Education,650,500,yes
 3,Start_Over,,,Start Over?,600,600,no

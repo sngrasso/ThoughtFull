@@ -1,7 +1,7 @@
 ID,StateName,ClassName,PNGFilename,CollisionFilename
 0,Splash,PNGRoom,assets/Screenbg.png,
-1,Instructions,PNGRoom,assets/Instructions.png,
-2,Characters,PNGRoom,assets/Characters.png,
+1,Instructions,Callibration,assets/intro_pages.png,
+2,Characters,Callibration,assets/character_page.png,
 3,Start,ScenarioRoom,assets/Screenbg.png,
 4,Govern_Route,ScenarioRoom,assets/Screenbg.png,
 5,Govern_Security,ScenarioRoom,assets/Screenbg.png,

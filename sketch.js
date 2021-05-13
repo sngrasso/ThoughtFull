@@ -84,8 +84,10 @@ let bodyFont;
 // Allocate Adventure Manager with states table and interaction tables
 function preload() {
 
-  headlineFont = loadFont('fonts/AstroSpace-0Wl3o.otf');
+  // headlineFont = loadFont('fonts/AstroSpace-0Wl3o.otf');
+  headlineFont = loadFont('fonts/continuum/contm.ttf');
   bodyFont = loadFont('fonts/Ubuntu-Regular.ttf');
+  // bodyFont = loadFont('fonts/continuum/contm.ttf');
 
   // load all images
   angerImage = loadImage("assets/anger_emoji.png");
@@ -183,7 +185,13 @@ function setupClickables() {
     clickables[i].onPress = clickableButtonPressed;
   }
 
+  clickables[0].width = 250;
+  clickables[0].height = 40;
+
+
   // we do specific callbacks for each clickable
+  clickables[6].onPress = clAddSecurity;
+
 
 }
 
@@ -219,11 +227,9 @@ clEnding = function() {
   adventureManager.clickablePressed(this.name);
 }
 
-clRaiseTaxes = function() {
-  characters[upperStudents].addAnger(1);
-  characters[moms].addAnger(1);
-  characters[lowerStudents].addAnger(1);
-  characters[shareHold].subAnger(1);
+clAddSecurity = function() {
+  console.log("security")
+  budget -= 25000;
   adventureManager.clickablePressed(this.name);
 }
 
@@ -443,5 +449,26 @@ class ScenarioRoom extends PNGRoom {
 
 
     }
+}
+
+class Callibration extends PNGRoom {
+  constructor() {
+    super();    // call super-class constructor to initialize variables in PNGRoom
+
+    this.titleText = "";
+    this.bodyText = "";
+  }
+
+  draw() {
+    // this calls PNGRoom.draw()
+    super.draw();
+    push();
+      line(0, mouseY, width, mouseY);
+      line(mouseX, 0, mouseX, height);
+      rectMode(CENTER);
+      rect(mouseX, mouseY, 25,25)
+    pop();
+
+  }
 }
 
