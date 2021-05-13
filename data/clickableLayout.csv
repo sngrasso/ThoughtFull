@@ -1,24 +1,27 @@
 ID,Name,State,PNGFilename,Text,x,y,visible
 0,StartScenario,Characters,,Start Scenario,550,620,yes
-1,Start_Govern,Start,,Government,100,500,yes
-2,Start_Education,Start,,Education,650,500,yes
-3,Start_Over,,,Start Over?,600,600,no
-4,Option_One,Govern_Route,,Public Hearings,100,500,yes
-5,Option_Two,Govern_Route,,General Meeting,650,500,yes
-6,Create_Team,Govern_Security,,Hire cyber security experts,100,500,yes
-7,Ignore_Team,Govern_Security,,Ignore Request,650,500,yes
-8,Upper_Class,Edu_Route,,Target towards College/High School,100,500,yes
-9,Low_Class,Edu_Route,,Target Towards Junior High/Elementary,650,500,yes
-10,Feature_UD,Upper_Class,,Use funds to create new features,100,500,yes
-11,Ignore,Upper_Class,,Leave as is,650,500,yes
-12,Feature_LD,Lower_Class,,Use funds to create new features,100,500,yes
-13,Ignore,Lower_Class,,Leave as is,650,500,yes
-14,Feature_LD,Lower_Class_Add,,Use funds to create new features,100,500,yes
-15,Ignore,Lower_Class_Add,,Leave as is,650,500,yes
-16,Sell,Edu_Budget,,Sell to a Company,100,500,yes
-17,Advertise,Edu_Budget,,Implement a paid service model,650,500,yes
-18,Keep_Model,Edu_Budget,,Keep the current model,650,600,yes
-19,Cut_Salaries,Edu_Keep,,Lower developer salaries - start hiring unpaid interns,100,500,yes
-20,Cut_Prod,Edu_Keep,,Cut cost of production,650,500,yes
-21,Address,Edu_Product,,Clear rumors,100,500,yes
-22,Ignore,Edu_Product,,Ignore,650,500,yes
+1,Start_Govern,Start,,Government,140,450,yes
+2,Start_Education,Start,,Education,140,525,yes
+3,Start_Over,,,Start Over?,140,600,no
+4,Option_One,Govern_Route,,Public Hearings,140,450,yes
+5,Option_Two,Govern_Route,,General Meeting,140,550,yes
+6,Create_Team,Govern_Security,,Hire cyber security experts (-$25K),140,450,yes
+7,Ignore_Team,Govern_Security,,Ignore Request,140,550,yes
+8,Upper_Class,Edu_Route,,Target towards College/High School,140,450,yes
+9,Low_Class,Edu_Route,,Target Towards Junior High/Elementary,140,550,yes
+10,Feature_UD,Upper_Class,,Use funds to create new features (-$35K),140,450,yes
+11,Ignore,Upper_Class,,Leave as is,140,550,yes
+12,Feature_LD,Lower_Class,,Use funds to create new features (-$30K),140,450,yes
+13,Ignore,Lower_Class,,Leave as is,140,550,yes
+14,Feature_LD,Lower_Class_Add,,Use funds to create new features (-$10K),140,450,yes
+15,Ignore,Lower_Class_Add,,Leave as is,140,550,yes
+16,Sell,Edu_Budget,,Sell to a Company,140,450,yes
+17,Advertise,Edu_Budget,,Implement a paid service model,140,525,yes
+18,Keep_Model,Edu_Budget,,Keep the current model,140,600,yes
+19,Cut_Salaries,Edu_Keep,,Lower developer salaries - start hiring unpaid interns,140,450,yes
+20,Cut_Prod,Edu_Keep,,Cut cost of production,140,550,yes
+21,Address,Edu_Product,,Clear rumors and give an honest statement,140,550,yes
+22,Ignore,Edu_Product,,There's nothing wrong with the technology - ignore the rumors,140,450,yes
+23,Start_Gen,Start,,General Population,140,600,yes
+24,Sell_Edu,Edu_Budget,,Sell to a Company,140,450,no
+
